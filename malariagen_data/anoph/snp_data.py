@@ -1280,6 +1280,13 @@ class AnophelesSnpData(
 
     def snp_dataset(self, *args, **kwargs):  # pragma: no cover
         """Deprecated, this method has been renamed to snp_calls()."""
+        import warnings
+        warnings.warn(
+            "snp_dataset() is deprecated and will be removed in a future version. "
+            "Use snp_calls() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return self.snp_calls(*args, **kwargs)
 
     def _prep_region_cache_param(
