@@ -69,6 +69,7 @@ class AnophelesGenomeFeaturesData(AnophelesGenomeSequenceData):
     def geneset(self, *args, **kwargs):  # pragma: no cover
         """Deprecated, this method has been renamed to genome_features()."""
         import warnings
+
         warnings.warn(
             "geneset() is deprecated and will be removed in a future version. "
             "Use genome_features() instead.",
