@@ -683,3 +683,48 @@ class TestPerInstanceCacheIsolation:
         ann1.clear_genome_cache()
         assert ann1._load_genome_seq.cache_info().currsize == 0
         assert ann2._load_genome_seq.cache_info().currsize == 1
+
+
+# ── TestInFrameComplexVariant ─────────────────────────────────────────────────
+
+
+class TestInFrameComplexVariant:
+    """
+    Verify that in-frame complex variants (MNP + INDEL combined, where the
+    net length change is a multiple of 3) are classified as CODON_CHANGE
+    with MODERATE impact — not the old TODO string with UNKNOWN impact.
+
+    The forward-strand CDS is: ATG|GCC|TTA|CAG|TGA (pos 4-18)
+    We use pos 7 (start of GCC codon) as our test position.
+
+    Example variant:
+        ref = "GCC"   (3 bp, the whole Ala codon at pos 7-9)
+        alt = "GCCATG" (6 bp — same start codon, plus a new Met codon inserted)
+        net length change = 6 - 3 = 3, which is a multiple of 3 → in-frame
+        len(ref) = 3 > 1, len(alt) = 6 > 1 → not a simple insertion or deletion
+        len(ref) != len(alt) → not a pure MNP
+        This hits the previously-unhandled else branch.
+    """
+
+    def setup_method(self):
+        self.ann = Annotator(make_genome(("chr1", FWD_SEQ)), FEATURES_BASIC_FWD.copy())
+
+    def test_inframe_complex_classified_as_codon_change(self):
+        # ref="GCC" (3 bp), alt="GCCATG" (6 bp): net change = +3, in-frame
+        row = _run(self.ann, "tx1", 7, "GCC", "GCCATG")
+        assert row["effect"] == "CODON_CHANGE"
+        assert row["impact"] == "MODERATE"
+
+    def test_inframe_complex_not_todo_string(self):
+        # Make sure the old TODO string is never returned
+        row = _run(self.ann, "tx1", 7, "GCC", "GCCATG")
+        assert "TODO" not in str(row["effect"])
+        assert row["impact"] != "UNKNOWN"
+
+    def test_inframe_complex_deletion_classified_as_codon_change(self):
+        # ref="GCCTTA" (6 bp), alt="GCC" (3 bp): net change = -3, in-frame
+        # len(ref)=6 > 1, len(alt)=3 > 1 → not a simple deletion
+        row = _run(self.ann, "tx1", 7, "GCCTTA", "GCC")
+        assert row["effect"] == "CODON_CHANGE"
+        assert row["impact"] == "MODERATE"
+        assert "TODO" not in str(row["effect"])
