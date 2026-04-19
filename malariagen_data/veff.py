@@ -448,9 +448,7 @@ def _get_within_cds_effect(ann, base_effect, cds, cdss):
             # net length change is a multiple of 3, so no frameshift occurs.
             # Classified as CODON_CHANGE with MODERATE impact, consistent
             # with how pure MNPs are handled above.
-            effect = base_effect._replace(
-                effect="CODON_CHANGE", impact="MODERATE"
-            )
+            effect = base_effect._replace(effect="CODON_CHANGE", impact="MODERATE")
 
     return effect
 
