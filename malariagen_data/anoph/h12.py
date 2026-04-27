@@ -184,12 +184,14 @@ class AnophelesH12Analysis(
         # Make plot.
         if title is None:
             title = sample_query
+        x_start = min(window_sizes)
+        x_end = max(window_sizes)
         fig = bokeh.plotting.figure(
             title=title,
             width=700,
             height=400,
             x_axis_type="log",
-            x_range=bokeh.models.Range1d(window_sizes[0], window_sizes[-1]),
+            x_range=bokeh.models.Range1d(x_start, x_end, bounds=(x_start, x_end)),
         )
         patch_x = list(window_sizes) + list(window_sizes[::-1])
         fig.patch(
@@ -221,9 +223,7 @@ class AnophelesH12Analysis(
         fig.xaxis.ticker = window_sizes
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
     def _h12_gwss(
         self,
@@ -459,9 +459,7 @@ class AnophelesH12Analysis(
 
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
     @_check_types
     @doc(
@@ -557,9 +555,7 @@ class AnophelesH12Analysis(
 
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
     @_check_types
     @doc(
@@ -690,9 +686,7 @@ class AnophelesH12Analysis(
 
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
     @_check_types
     @doc(
@@ -792,9 +786,7 @@ class AnophelesH12Analysis(
 
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
     @_check_types
     @doc(
@@ -919,9 +911,7 @@ class AnophelesH12Analysis(
 
         if show:  # pragma: no cover
             bokeh.plotting.show(fig)
-            return None
-        else:
-            return fig
+        return fig
 
 
 def hampel_filter(x: np.ndarray, size: int, t: float = 3.0) -> np.ndarray:
