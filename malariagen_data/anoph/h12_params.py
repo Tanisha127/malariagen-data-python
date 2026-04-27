@@ -37,3 +37,31 @@ cohort_size_default: Optional[base_params.cohort_size] = None
 min_cohort_size_default: base_params.min_cohort_size = 15
 
 max_cohort_size_default: base_params.max_cohort_size = 50
+
+apply_hampel: TypeAlias = Annotated[
+    bool,
+    """
+    If True, apply a Hampel filter to the H12 values to remove isolated
+    outliers that are unlikely to represent true selection signals.
+    """,
+]
+apply_hampel_default: apply_hampel = False
+
+hampel_window: TypeAlias = Annotated[
+    int,
+    """
+    The number of neighbouring windows on each side to use when applying
+    the Hampel filter.
+    """,
+]
+hampel_window_default: hampel_window = 5
+
+hampel_t: TypeAlias = Annotated[
+    float,
+    """
+    The threshold multiplier for the Hampel filter. Windows whose H12 value
+    differs from the local median by more than `hampel_t` scaled MADs are
+    replaced by the median.
+    """,
+]
+hampel_t_default: hampel_t = 3.0
